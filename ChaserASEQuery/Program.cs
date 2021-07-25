@@ -52,9 +52,9 @@ namespace ChaserASEQuery
                 }  
 
                 Console.WriteLine("Enter server IP to Query: "); //Writing to console requesting server IP
-                ip = Console.ReadLine(); //Reading response and saving to string 'ip'
+                ip = Console.ReadLine(); //Reading response and storing to string 'ip'
                 Console.WriteLine("Enter server port: "); //Writing to console requesting server port
-                port = Convert.ToInt32(Console.ReadLine()); //Reading response and saving to string 'port'
+                port = Convert.ToInt32(Console.ReadLine()); //Reading response and storing to string 'port'
 
                 Program newq = new Program(); //Initiating new instance of the program
                 newq.qServer(ip, port); //Sending ip and port to method 'qServer'          
@@ -63,12 +63,12 @@ namespace ChaserASEQuery
 
         private void qServer(string ip, int port)
         {
-            UdpClient udp = new UdpClient(15000); //Crearting new udp client under port 1500, port is irrelevent
+            UdpClient udp = new UdpClient(15000); //Creating new udp client under port 1500, port is irrelevent
             udp.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReceiveTimeout, 5000); //Setting socket options, time out after 5 seconds
 
             try
             {
-                udp.Connect(ip, port + 123); //Connecting to server (all seeing eye queries under game port + 123, ex. port: 3004 -- all seeing eye query port is 3127)
+                udp.Connect(ip, port + 123); //Connecting to server (all seeing eye queries under game port + 123, ex. port: 3004 -- all seeing eye query port would then be 3127)
                 udp.Send(message, message.Length); //Sending out message 's' as defined above
 
                 byte[] receivedResponse = udp.Receive(ref EndPoint); //Receiving response
