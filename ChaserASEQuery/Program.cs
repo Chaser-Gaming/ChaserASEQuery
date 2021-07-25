@@ -39,13 +39,25 @@ namespace ChaserASEQuery
         {
             while (true) //Keeping the app running in a loop
             {
+                Console.WriteLine("Press any key to continue or 'q' to stop the application..."); //q exits application, else continue
+                for (; ; )
+                {
+                    string line = Console.ReadLine();
+                    if (string.IsNullOrEmpty(line))
+                        break;
+                    if (line == "q")
+                    {
+                        Environment.Exit(0);
+                    }
+                }  
+
                 Console.WriteLine("Enter server IP to Query: "); //Writing to console requesting server IP
                 ip = Console.ReadLine(); //Reading response and saving to string 'ip'
                 Console.WriteLine("Enter server port: "); //Writing to console requesting server port
                 port = Convert.ToInt32(Console.ReadLine()); //Reading response and saving to string 'port'
 
                 Program newq = new Program(); //Initiating new instance of the program
-                newq.qServer(ip, port); //Sending ip and port to method 'qServer'
+                newq.qServer(ip, port); //Sending ip and port to method 'qServer'          
             }
         }
 
@@ -59,10 +71,10 @@ namespace ChaserASEQuery
                 udp.Connect(ip, port + 123); //Connecting to server (all seeing eye queries under game port + 123, ex. port: 3004 -- all seeing eye query port is 3127)
                 udp.Send(message, message.Length); //Sending out message 's' as defined above
 
-                byte[] receiveBytes = udp.Receive(ref EndPoint); //Receiving response
+                byte[] receivedResponse = udp.Receive(ref EndPoint); //Receiving response
                 udp.Close(); //Closing connection to server
 
-                string response = Encoding.ASCII.GetString(receiveBytes); //Converting response to string
+                string response = Encoding.ASCII.GetString(receivedResponse); //Converting response to string
                 //Typical response example with no players "EYE1 08chaserd 053004 11chasergaming.com 03ST rFinal Strike 061.490 020 020 0320 01"
                 //Response with 1 player "EYE1 08chaserd 053004 11chasergaming.com 03ST rFinal Strike 061.490 020 021 0320 01 1f 07jessie 020 06Gomez 020 0357"
 
@@ -90,13 +102,13 @@ namespace ChaserASEQuery
             Console.WriteLine($"Players online: { _online }/{ _max }");
             Console.WriteLine($"Map: { _map }");
             Console.WriteLine($"Gametype: { _serverType }");
-            Console.WriteLine($"Version: { _serverVersion }" + Environment.NewLine);
+            Console.WriteLine($"Version: { _serverVersion }");
 
             if (_online > 0) { ParsePlayers(response); } //Check if there are players online, if greater than 0, go to ParsePlayers method
             else { Console.WriteLine("###############################-Query End-###############################"); } //Else, end query
         }
 
-        private static string AddDeliminator(string response) //This is optional, I do this because all seeing eye responds with blank spaces and useless char counts, so I clean the reponse and add a '\\' deliminator similar to gamespy
+        private static string AddDeliminator(string response) //This is optional, I do this because all seeing eye responds with blank spaces and char counts, so I clean the reponse and add a '\\' deliminator similar to gamespy, C# we can easily just split this string at the deliminator
         {
             try
             {
@@ -129,5 +141,4 @@ namespace ChaserASEQuery
             Console.WriteLine("###############################-Query End-###############################"); //End player query
         }
     }
-}
 }
