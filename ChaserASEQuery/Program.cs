@@ -119,10 +119,10 @@ namespace ChaserASEQuery
                     _pPing = message.Split('\\')[i + 4];
 
                     Console.WriteLine($"Player{ ++p }: {Environment.NewLine} Name: { _pName } {Environment.NewLine} Score: { _pScore } {Environment.NewLine} Team: { _pTeam } {Environment.NewLine} Skin: { _pSkin } {Environment.NewLine} Ping: { _pPing }");
-                    Console.WriteLine("###############################-Query End-###############################");
 
                     i = i + 6;
                 }
+                Console.WriteLine("###############################-Query End-###############################");
             }
             else
             {
