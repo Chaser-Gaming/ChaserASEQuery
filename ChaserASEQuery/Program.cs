@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -39,25 +40,13 @@ namespace ChaserASEQuery
         {
             while (true) //Keeping the app running in a loop
             {
-                Console.WriteLine("Press any key to continue or 'q' to stop the application..."); //q exits application, else continue
-                for (; ; )
-                {
-                    string line = Console.ReadLine();
-                    if (string.IsNullOrEmpty(line))
-                        break;
-                    if (line == "q")
-                    {
-                        Environment.Exit(0);
-                    }
-                }  
-
                 Console.WriteLine("Enter server IP to Query: "); //Writing to console requesting server IP
                 ip = Console.ReadLine(); //Reading response and storing to string 'ip'
                 Console.WriteLine("Enter server port: "); //Writing to console requesting server port
                 port = Convert.ToInt32(Console.ReadLine()); //Reading response and storing to string 'port'
 
                 Program newq = new Program(); //Initiating new instance of the program
-                newq.qServer(ip, port); //Sending ip and port to method 'qServer'          
+                newq.qServer(ip, port); //Sending ip and port to method 'qServer'
             }
         }
 
@@ -87,6 +76,19 @@ namespace ChaserASEQuery
             }
         }
 
+        private static string AddDeliminator(string response) //This is optional, I do this because all seeing eye responds with blank spaces and char counts, so I clean the reponse and add a '\\' deliminator similar to gamespy, C# we can easily just split this string at the deliminator
+        {
+            try
+            {
+                return Regex.Replace(response, @"[^\w\.@*&^%$#!()= -]", "\\",      //Replacing blank spaces with '\\'
+                                     RegexOptions.None, TimeSpan.FromSeconds(1.5));
+            }
+            catch (RegexMatchTimeoutException)
+            {
+                return string.Empty;
+            }
+        }
+
         private void Parse(string response)
         {
             _serverName = response.Split('\\')[3]; //This index will always be the server name
@@ -108,19 +110,6 @@ namespace ChaserASEQuery
             else { Console.WriteLine("###############################-Query End-###############################"); } //Else, end query
         }
 
-        private static string AddDeliminator(string response) //This is optional, I do this because all seeing eye responds with blank spaces and char counts, so I clean the reponse and add a '\\' deliminator similar to gamespy, C# we can easily just split this string at the deliminator
-        {
-            try
-            {
-                return Regex.Replace(response, @"[^\w\.@*&^%$#!()= -]", "\\",      //Replacing blank spaces with '\\'
-                                     RegexOptions.None, TimeSpan.FromSeconds(1.5));
-            }
-            catch (RegexMatchTimeoutException)
-            {
-                return string.Empty;
-            }
-        }
-
         private void ParsePlayers(string message)
         {
             int i = 12; //This is the default index of the first players name
@@ -128,7 +117,7 @@ namespace ChaserASEQuery
 
             for (int o = 0; o < _online; o++) //Looping through players
             {
-                _pName = message.Split('\\')[i]; //This is out default start index of 12
+                _pName = message.Split('\\')[i]; //This is out default start index
                 _pScore = Convert.ToInt32(message.Split('\\')[i + 3]); //Index for current player score
                 _pTeam = message.Split('\\')[i + 1]; //Index for current player team (0 = deathmatch or law breaker, 1 = government forces)
                 _pSkin = message.Split('\\')[i + 2]; //Index for current player skin
